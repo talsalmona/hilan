@@ -12,6 +12,6 @@ Download your Hilan payslip from CLI
 ``` pip install -r requirements.txt ```
 5. Enter your credentials and other configurations in conf.yaml
 6. Run
-``` python src/hilan.py ```
+``` ./download ```
 
 Your payslip for the last month will be downloaded.
