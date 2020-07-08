@@ -1,4 +1,5 @@
 # Hilan Payslip
+![Build](https://github.com/talsalmona/hilan/workflows/Build/badge.svg)
 
 Download your Hilan payslip from CLI
 
