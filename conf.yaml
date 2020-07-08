@@ -1,0 +1,12 @@
+# The organization ID at Hilan
+orgId: 9399
+
+# Your credentials
+username: 123
+password: xyz
+
+# Designate a target folder for the downloaded file (this is especially useful if you upload the files to Dropbox or GDrive).
+folder: '.'
+
+# File name format. Python strftime format symbols are supported.
+format: '%Y-%m-payslip.pdf'

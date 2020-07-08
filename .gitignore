@@ -1,0 +1,10 @@
+.idea
+.vscode
+.DS_Store
+bin/
+include/
+lib/
+__pycache__/
+.Python
+.pyc
+*.pdf
