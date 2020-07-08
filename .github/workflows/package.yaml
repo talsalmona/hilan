@@ -20,6 +20,13 @@ jobs:
     - name: Package
       run: |
         python -O -m PyInstaller --onefile src/hilan.py
+    - uses: apple-actions/import-codesign-certs@v1
+      with:
+        p12-file-base64: ${{ secrets.CERTIFICATE_OSX_APPLICATION }}
+        p12-password: ${{ secrets.CERTIFICATE_PASSWORD }}
+    - name: sign
+      run: |
+        codesign -s "Tal Salmona" dist/hilan
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
