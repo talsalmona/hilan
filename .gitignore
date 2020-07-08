@@ -4,7 +4,11 @@
 bin/
 include/
 lib/
+build/
+dist/
 __pycache__/
 .Python
 .pyc
 *.pdf
+dist/hilan
+hilan.spec
