@@ -32,11 +32,11 @@ jobs:
     - name: sign
       run: |
         codesign -s "Tal Salmona" dist/hilan
-    - name: Generate changelog
-      id: changelog
-      uses: metcalfc/changelog-generator@v0.4.0
-      with:
-        myToken: ${{ secrets.GITHUB_TOKEN }}
+    # - name: Generate changelog
+    #   id: changelog
+    #   uses: metcalfc/changelog-generator@v0.4.0
+    #   with:
+    #     myToken: ${{ secrets.GITHUB_TOKEN }}
     - name: 'Get Previous tag'
       id: previoustag
       uses: "WyriHaximus/github-action-get-previous-tag@master"
@@ -50,7 +50,7 @@ jobs:
       with:
         tag_name: ${{ steps.previoustag.outputs.tag }}
         release_name: Release ${{ steps.previoustag.outputs.tag }}
-        body: ${{ steps.changelog.outputs.changelog }}
+        # body: ${{ steps.changelog.outputs.changelog }}
         draft: false
         prerelease: false
     - name: Upload Release Asset
