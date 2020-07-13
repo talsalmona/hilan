@@ -12,6 +12,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Lint Code Base
+      uses: docker://github/super-linter:v3
+      env:
+        VALIDATE_ALL_CODEBASE: false
+        DEFAULT_BRANCH: master
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
