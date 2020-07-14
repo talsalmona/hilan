@@ -9,9 +9,9 @@ Download your Hilan payslip from CLI
 Choose one of the two methods below to download your payslip for the last month.
 
 
-### Precompiled for MacOS
+### Binary for MacOS
 1. Download the [latest release](https://github.com/talsalmona/hilan/releases/latest)
-2. Create a conf.yaml file in the same folder as the downloaded executable
+2. Rename conf-example.yaml to conf.yaml and fill in your credential and other settings.
 3. Run ``` ./hilan ```
 
 * You may need to go to the "Security & Privacy" settings on your mac and allow the app to run. This is usually a one time step.
@@ -23,6 +23,6 @@ Choose one of the two methods below to download your payslip for the last month.
 3. Optionally, create a virtualenv
 4. Install the depenencies
 ``` pip install -r requirements.txt ```
-5. Enter your credentials and other configurations in conf.yaml
+5. Rename conf-example.yaml to conf.yaml and fill in your credential and other settings.
 6. Run
 ``` python src/hilan.py ```
