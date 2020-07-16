@@ -1,7 +1,8 @@
 # Hilan Payslip
 ![Build](https://github.com/talsalmona/hilan/workflows/Build/badge.svg)
 
-Download your Hilan payslip from CLI
+Download your Hilan payslip from CLI.
+Bonus: it will compare the last two salaries to see there are no large gaps and will alert you if there is.
 
 
 ## Usage
