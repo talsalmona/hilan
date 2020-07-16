@@ -46,7 +46,16 @@ class TestHilan(unittest.TestCase):
         with self.captured_output() as (out, err):
             self.assertFalse(h.login())
         output = out.getvalue().strip()
-        self.assertEqual(output, 'Login failed. Please make sure the credentails in conf.yaml are correct and try again.\nYou also need to go to the Hilan website and solve a captcha challenge.')
+        self.assertEqual(output, 'Login failed. You need to go to the Hilan website and solve a captcha challenge before trying again.')
+
+    @responses.activate
+    def test_login_failure_temporary(self):
+        responses.add(responses.POST, 'https://nextage.net.hilan.co.il/HilanCenter/Public/api/LoginApi/LoginRequest', json={'IsFail': True, 'Code': 18})
+        h = hilan.Hilan()
+        with self.captured_output() as (out, err):
+            self.assertFalse(h.login())
+        output = out.getvalue().strip()
+        self.assertEqual(output, 'There was a temporary login error. You should try again in a few minutes.')
 
     @responses.activate
     def test_download(self):
@@ -62,6 +71,43 @@ class TestHilan(unittest.TestCase):
         self.assertTrue(os.path.exists(file_name))
         os.remove(file_name)
 
+    @responses.activate
+    def test_compare_months_large_gap(self):
+        h = hilan.Hilan()
+        h.load_config({'orgId': 123, 'username': 'abc', 'password': 'xyz', 'folder': '.', 'format': '%Y-%d'})
+        mock_url = f'https://nextage.net.hilan.co.il/Hilannetv2/PersonalFile/SalaryAllSummary.aspx'
+        responses.add(responses.POST, mock_url, body="<table><tr class='RSGrid'><td>sum</td><td class='ARSGrid'>1</td><td class='RSGrid'>2</td></tr></table>")
+
+        with self.captured_output() as (out, err):
+            result = h.compare_months()
+        output = out.getvalue().strip()
+        self.assertEqual(result, 2)
+        self.assertEqual(output, 'There is a large gap from the previous salary, please check your payslip.\nLast month\'s sallary was 1, this month is 2')
+
+    @responses.activate
+    def test_compare_months_ok(self):
+        h = hilan.Hilan()
+        h.load_config({'orgId': 123, 'username': 'abc', 'password': 'xyz', 'folder': '.', 'format': '%Y-%d'})
+        mock_url = f'https://nextage.net.hilan.co.il/Hilannetv2/PersonalFile/SalaryAllSummary.aspx'
+        responses.add(responses.POST, mock_url, body="<table><tr class='RSGrid'><td>sum</td><td class='ARSGrid'>1</td><td class='RSGrid'>1</td></tr></table>")
+
+        with self.captured_output() as (out, err):
+            result = h.compare_months()
+        output = out.getvalue().strip()
+        self.assertEqual(output, 'This months salary was 1')
+
+    @responses.activate
+    def test_compare_months_fail_fetch(self):
+        h = hilan.Hilan()
+        h.load_config({'orgId': 123, 'username': 'abc', 'password': 'xyz', 'folder': '.', 'format': '%Y-%d'})
+        mock_url = f'https://nextage.net.hilan.co.il/Hilannetv2/PersonalFile/SalaryAllSummary.aspx'
+        responses.add(responses.POST, mock_url, body="")
+
+        with self.captured_output() as (out, err):
+            result = h.compare_months()
+        output = out.getvalue().strip()
+        self.assertEqual(result, 0)
+        self.assertEqual(output, 'Could not fetch the salary summary.')
 
 
     def test_load_config(self):

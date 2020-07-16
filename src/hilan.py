@@ -38,7 +38,7 @@ class Hilan:
         temp_error = json_data.get('Code', 0) == 18 # Temporary login errror. Hilan says: "Try again later"
         if failure:
             if captcha:
-                print("You need to go to the Hilan website and solve a captcha challenge before trying again.")
+                print("Login failed. You need to go to the Hilan website and solve a captcha challenge before trying again.")
             elif temp_error:
                 print("There was a temporary login error. You should try again in a few minutes.")
             else:
@@ -77,17 +77,22 @@ class Hilan:
                 row.append(td.text)
             table.append(row)
 
-        last_month_salary = self.extract_number(table[0][1])
-        this_month_salary = self.extract_number(table[0][2])
-        diff = 100 * abs(this_month_salary - last_month_salary) / last_month_salary
-        if (diff > 1):
-            print("There is a large gap from the previous salary, please check your payslip.")
-            print("Last month's sallary was %s, this month is %s" % ("{:,}".format(last_month_salary), "{:,}".format(this_month_salary)))
+        if (len(table) > 0 and len(table[0]) == 3):
+            last_month_salary = self.extract_number(table[0][1])
+            this_month_salary = self.extract_number(table[0][2])
+            diff = 100 * abs(this_month_salary - last_month_salary) / last_month_salary
+            if (diff > 1):
+                print("There is a large gap from the previous salary, please check your payslip.")
+                print("Last month's sallary was %s, this month is %s" % ("{:,}".format(last_month_salary), "{:,}".format(this_month_salary)))
+            else:
+                print("This months salary was %s" % "{:,}".format(this_month_salary))
+            return this_month_salary
         else:
-            print("This months salary was %s" % "{:,}".format(this_month_salary))
-        return this_month_salary
+            print("Could not fetch the salary summary.")
+            return 0
 
     def extract_number(self, str):
+        if str == '': return 1
         num = re.findall(r'\d+', str)[0]
         return int(num)
 
