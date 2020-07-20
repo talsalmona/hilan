@@ -27,4 +27,4 @@ jobs:
         pip install -r requirements.txt
     - name: Run unit tests
       run: |
-        nosetests
+        pytest src/hilan_test.py
