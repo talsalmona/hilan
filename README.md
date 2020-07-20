@@ -3,10 +3,16 @@
 
 Download your Hilan payslip from CLI.
 
-Bonus: it will compare the last two salaries to see there are no large gaps and will alert you if there is.
-
+Bonus: The script will compare the salary to the previous month and will alert if there is a large gap between the two months.
 
 ## Usage
+
+Run ```hilan``` to download the last month's payslip
+
+Run ```hilan <int>``` to donwload older months. For example ```hilan 3``` will download the payslip for 3 months ago.
+
+
+## Install
 
 Choose one of the two methods below to download your payslip for the last month.
 
