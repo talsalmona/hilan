@@ -11,7 +11,7 @@ import click
 class Hilan:
 
     def __init__(self, month):
-        self.month = month if month else 0
+        self.month_delta = month if month else 0
         self.session = requests.Session()
         self.config = {}
 
@@ -23,8 +23,6 @@ class Hilan:
                     (file_name, success) = self.download()
                     if success:
                         self.compare_months()
-        else:
-            exit(1)
 
     def load_config(self, config):
         if all (key in config for key in ("subdomain", "username", "password", "folder", "format")):
@@ -99,8 +97,8 @@ class Hilan:
             table.append(row)
 
         if (len(table) > 0 and len(table[0]) == 3):
-            two_months_salary = self.extract_number(table[0][1])
-            last_month_salary = self.extract_number(table[0][2])
+            two_months_salary = self.extract_number_from_cell(table[0][1])
+            last_month_salary = self.extract_number_from_cell(table[0][2])
             diff = 100 * abs(last_month_salary - two_months_salary) / two_months_salary
             if (diff > 1):
                 print("There is a large gap from the previous salary, please check your payslip.")
@@ -122,17 +120,16 @@ class Hilan:
         file_magic = content[0:4]
         if (file_magic != pdf_magic):
             return True
-
         return False
 
-    def extract_number(self, str):
+    def extract_number_from_cell(self, str):
         if str == '': return 1
         num = re.findall(r'\d+', str)[0]
         return int(num)
 
 
     def get_last_month(self, delta=1):
-        delta += self.month
+        delta += self.month_delta
         today = datetime.date.today()
         first_day = today.replace(day=1)
         last_month = first_day - relativedelta(months=delta)

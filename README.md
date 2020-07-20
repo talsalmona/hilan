@@ -14,7 +14,7 @@ Run ```./hilan <int>``` to donwload older months. For example ```./hilan 3``` wi
 
 ## Install
 
-Choose one of the two methods below to download your payslip for the last month.
+Choose one of the two methods below:
 
 
 ### Binary for MacOS
