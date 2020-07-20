@@ -40,5 +40,5 @@ Choose one of the two methods below to download your payslip for the last month.
 ### How do I find my orgId ?
 1. Go to the Hilan login page
 2. Right Click -> View Page Source
-3. Search for the string ```{\"OrgId\":\"``
+3. Search for the string ```{\"OrgId\":\"```
 4. The number to the right of it is your orgId
