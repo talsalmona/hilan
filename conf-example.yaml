@@ -1,5 +1,5 @@
-# The organization ID at Hilan
-orgId: 1234
+# The hilan.co.il subdomain
+subdomain: 'subdomain.net'
 
 # Your credentials
 username: 12345

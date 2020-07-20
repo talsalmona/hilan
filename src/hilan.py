@@ -17,24 +17,36 @@ class Hilan:
 
     def execute(self):
         if self.load_config(yaml.load(open('conf.yaml', 'r'), Loader=yaml.FullLoader)):
-            if self.login():
-                (file_name, success) = self.download()
-                if success:
-                    self.compare_months()
+            self.orgId = self.fetch_orgId()
+            if (self.orgId > 0):
+                if self.login():
+                    (file_name, success) = self.download()
+                    if success:
+                        self.compare_months()
         else:
             exit(1)
 
     def load_config(self, config):
-        if all (key in config for key in ("orgId", "username", "password", "folder", "format")):
+        if all (key in config for key in ("subdomain", "username", "password", "folder", "format")):
             self.config = config
             return True
         else:
             print("Some config keys are missing")
         return False
 
+    def fetch_orgId(self):
+        url = f'https://{self.config["subdomain"]}.hilan.co.il'
+        response = requests.get(url)
+        num = re.findall(r'{\\"OrgId\\":\\"(\d+)\\"', response.text)
+        if len(num) == 1: return int(num[0])
+        return -1
+
+
+
     def login(self):
-        post_data = {key: self.config[key] for key in ('orgId','username','password') if key in self.config}
-        response = self.session.post('https://nextage.net.hilan.co.il/HilanCenter/Public/api/LoginApi/LoginRequest', data=post_data)
+        post_data = {key: self.config[key] for key in ('username','password') if key in self.config}
+        post_data['orgId'] = self.orgId
+        response = self.session.post(f'https://{self.config["subdomain"]}.hilan.co.il/HilanCenter/Public/api/LoginApi/LoginRequest', data=post_data)
 
         json_data = response.json()
         failure = json_data.get('IsFail', False)
@@ -56,7 +68,7 @@ class Hilan:
         print(last_month.strftime('Getting salary for %B %Y'))
 
         request_date = last_month.strftime("%m/%Y")
-        pdf_url = f'https://nextage.net.hilan.co.il/Hilannetv2/PersonalFile/PdfPaySlip.aspx?Date=01/{request_date}&UserId={self.config["orgId"]}{self.config["username"]}'
+        pdf_url = f'https://{self.config["subdomain"]}.hilan.co.il/Hilannetv2/PersonalFile/PdfPaySlip.aspx?Date=01/{request_date}&UserId={self.orgId}{self.config["username"]}'
         response = self.session.get(pdf_url)
         if (self.is_not_valid_pdf(response.content)):
             print('Could not download a valid PDF file')
@@ -74,7 +86,7 @@ class Hilan:
         request_date = "01/%s,0,30/%s,0" % (two_months_ago.strftime("%m/%Y"), last_month.strftime("%m/%Y"))
 
         post_data = {'__DatePicker_State': request_date}
-        response = self.session.post('https://nextage.net.hilan.co.il/Hilannetv2/PersonalFile/SalaryAllSummary.aspx', data=post_data)
+        response = self.session.post(f'https://{self.config["subdomain"]}.hilan.co.il/Hilannetv2/PersonalFile/SalaryAllSummary.aspx', data=post_data)
         soup = BeautifulSoup(response.content, "html.parser")
         trs = soup.select('tr[class=RSGrid]') + soup.select('tr[class=ARSGrid]')
 
