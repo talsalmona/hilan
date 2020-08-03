@@ -50,13 +50,19 @@ class Hilan:
         failure = json_data.get('IsFail', False)
         captcha = json_data.get('IsShowCaptcha', False)
         temp_error = json_data.get('Code', 0) == 18 # Temporary login errror. Hilan says: "Try again later"
+        change_password = json_data.get('Code', 0) == 6 # Need to change password
+        error_message = json_data.get('ErrorMessage', '')
         if failure:
             if captcha:
                 print("Login failed. You need to go to the Hilan website and solve a captcha challenge before trying again.")
             elif temp_error:
                 print("There was a temporary login error. Please try again in a few minutes.")
+            elif change_password:
+                print("You need to change your password. Please do so on the Hilan website.")
             else:
                print("Login failed. Please make sure the credentails in conf.yaml are correct and try again.")
+               print("Hilan Message:")
+               self.rtl_print(error_message)
 
             return False
         return True
@@ -114,6 +120,9 @@ class Hilan:
         else:
             print("Could not fetch the salary summary")
             return (-1, False)
+
+    def rtl_print(self, message):
+        print(message[::-1])
 
     def is_not_valid_pdf(self, content):
         pdf_magic = bytearray(b'\x25\x50\x44\x46') #%PDF in ascii

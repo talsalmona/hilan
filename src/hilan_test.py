@@ -49,7 +49,7 @@ class TestHilan(unittest.TestCase):
         with self.captured_output() as (out, err):
             self.assertFalse(h.login())
         output = out.getvalue().strip()
-        self.assertEqual(output, 'Login failed. Please make sure the credentails in conf.yaml are correct and try again.')
+        self.assertEqual(output, 'Login failed. Please make sure the credentails in conf.yaml are correct and try again.\nHilan Message:')
 
 
     @responses.activate
@@ -69,6 +69,15 @@ class TestHilan(unittest.TestCase):
             self.assertFalse(h.login())
         output = out.getvalue().strip()
         self.assertEqual(output, 'There was a temporary login error. Please try again in a few minutes.')
+
+    @responses.activate
+    def test_login_failure_change_password(self):
+        responses.add(responses.POST, 'https://zzz.hilan.co.il/HilanCenter/Public/api/LoginApi/LoginRequest', json={'IsFail': True, 'Code': 6})
+        h = self.get_hilan()
+        with self.captured_output() as (out, err):
+            self.assertFalse(h.login())
+        output = out.getvalue().strip()
+        self.assertEqual(output, 'You need to change your password. Please do so on the Hilan website.')
 
     @responses.activate
     def test_download_ok(self):
