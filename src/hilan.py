@@ -10,8 +10,9 @@ import click
 
 class Hilan:
 
-    def __init__(self, month):
-        self.month_delta = month if month else 0
+    def __init__(self, lookback, private):
+        self.month_delta = lookback if lookback else 0
+        self.private = private
         self.session = requests.Session()
         self.config = {}
 
@@ -109,13 +110,13 @@ class Hilan:
             if (diff > 1):
                 print("There is a large gap from the previous salary, please check your payslip.")
                 print("The %s sallary was %s while %s was %s" % (
-                        two_months_ago.strftime("%B"),
-                        "{:,}".format(two_months_salary),
-                        last_month.strftime("%B"),
-                        "{:,}".format(last_month_salary)))
+                    two_months_ago.strftime("%B"),
+                    self.mask_salary("{:,}".format(two_months_salary)),
+                    last_month.strftime("%B"),
+                    self.mask_salary("{:,}".format(last_month_salary))))
                 return (last_month_salary, False)
             else:
-                print("The %s salary was %s" % (last_month.strftime("%B"), "{:,}".format(last_month_salary)))
+                print("The %s salary was %s" % (last_month.strftime("%B"), self.mask_salary("{:,}".format(last_month_salary))))
             return (last_month_salary, True)
         else:
             print("Could not fetch the salary summary")
@@ -144,16 +145,22 @@ class Hilan:
         last_month = first_day - relativedelta(months=delta)
         return last_month
 
+    def mask_salary(self, salary):
+        if self.private:
+            return re.sub(r'[0-9]+,', '**,', salary)
+        return salary
+
 
 @click.command()
-@click.argument('month', default=0, type=click.INT)
-def execute(month):
-    """Download the salary file for the past month.
+@click.argument('lookback', default=0, type=click.INT)
+@click.option('-p', '--private', default=False, is_flag=True, help='If added, the salary sums will not be printed to console.')
+def execute(lookback, private):
+    """Download the salary file for the past <LOOKBACK> months.
 
-    MONTH is an optional parameter you can provide to download older months.
+    LOOKBACK is an optional parameter you can provide to download older months.
     For example running 'hilan 3' will download the salary file for 3 months ago.
     """
-    h = Hilan(month)
+    h = Hilan(lookback, private)
     h.execute()
 
 if __name__ == "__main__":
