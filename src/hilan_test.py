@@ -133,14 +133,22 @@ class TestHilan(unittest.TestCase):
         self.assertEqual(result, (-1, False))
         self.assertEqual(output, 'Could not fetch the salary summary')
 
+    def test_salary_mask(self):
+        h = self.get_hilan(True)
+        mask = h.mask_salary('100,000')
+        self.assertEqual('**,000', mask)
+
+        h = self.get_hilan()
+        mask = h.mask_salary('100,000')
+        self.assertEqual('100,000', mask)
 
     def test_load_config(self):
-        h = hilan.Hilan(0)
+        h = hilan.Hilan(0, False)
         self.assertTrue(h.load_config({'subdomain': 'zzz', 'username': 'abc', 'password': 'xyz', 'folder': '.', 'format': '%d%Y'}))
         self.assertFalse(h.load_config({'subdomain': 'zzz', 'username': 'abc', 'password': 'xyz', 'folder': '.'}))
 
-    def get_hilan(self):
-        h = hilan.Hilan(0)
+    def get_hilan(self, private=False):
+        h = hilan.Hilan(0, private)
         h.load_config({'subdomain': 'zzz', 'username': 'abc', 'password': 'xyz', 'folder': '.', 'format': '%Y-%d'})
         h.orgId = 12345
         return h
