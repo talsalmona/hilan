@@ -1,0 +1,5 @@
+#!/bin/sh
+
+source bin/activate
+python src/hilan.py
+deactivate
