@@ -36,7 +36,7 @@ class Hilan:
     def fetch_orgId(self):
         url = f'https://{self.config["subdomain"]}.hilan.co.il'
         response = requests.get(url)
-        num = re.findall(r'{\\"OrgId\\":\\"(\d+)\\"', response.text)
+        num = re.findall(r'\\"OrgId\\":\\"(\d+)\\"', response.text)
         if len(num) == 1: return int(num[0])
         return -1
 
