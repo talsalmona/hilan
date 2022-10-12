@@ -33,7 +33,7 @@ Choose one of the two methods below:
 
 
 ### From Source
-1. Install python 3.6+ and pip
+1. Install python 3.7+ and pip
 2. Clone this repo
 3. Optionally, create a virtualenv
 4. Install the depenencies
